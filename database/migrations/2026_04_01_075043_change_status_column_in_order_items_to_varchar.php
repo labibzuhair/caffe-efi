@@ -9,7 +9,6 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        // Mengubah kolom status menjadi VARCHAR agar bebas menerima kata status apapun
         DB::statement("ALTER TABLE order_items MODIFY COLUMN status VARCHAR(50) DEFAULT 'pending'");
     }
 
@@ -18,7 +17,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        // Opsional: Kembalikan ke ENUM jika di-rollback
         DB::statement("ALTER TABLE order_items MODIFY COLUMN status ENUM('pending', 'cooking', 'ready_to_serve', 'served', 'completed') DEFAULT 'pending'");
     }
 };

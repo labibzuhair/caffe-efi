@@ -9,13 +9,11 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SocialAuthController extends Controller
 {
-    // Mengarahkan user ke halaman login Google/GitHub
     public function redirect($provider)
     {
         return Socialite::driver($provider)->redirect();
     }
 
-    // Menangani kembalian data dari Google/GitHub
     public function callback($provider)
     {
         try {
@@ -24,7 +22,6 @@ class SocialAuthController extends Controller
             return redirect('/login')->with('error', 'Terjadi kesalahan saat menghubungi ' . ucfirst($provider));
         }
 
-        // Cari user berdasarkan email
         $user = \App\Models\User::where('email', $socialUser->getEmail())->first();
 
         if (!$user) {
@@ -35,19 +32,16 @@ class SocialAuthController extends Controller
 
 
         if ($user) {
-            // INI KODE YANG HILANG: Update kolom provider dengan data dari Google/GitHub
             $user->update([
-                'provider' => $provider,                 // Menyimpan 'google' atau 'github'
-                'provider_id' => $socialUser->getId(),   // Menyimpan ID unik
-                'provider_token' => $socialUser->token,  // Menyimpan token akses
+                'provider' => $provider,
+                'provider_id' => $socialUser->getId(),
+                'provider_token' => $socialUser->token,
             ]);
 
-            // Login dan arahkan ke dashboard
             \Illuminate\Support\Facades\Auth::login($user);
             return redirect()->route('dashboard');
         }
 
-        // Jika email tidak ada di database (bukan staf)
         return redirect('/login')->with('error', 'Akses ditolak. Email Anda belum terdaftar sebagai staf kafe.');
     }
 }

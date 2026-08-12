@@ -3,14 +3,13 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Table;
-use App\Models\Setting; // Pastikan model Setting dipanggil
+use App\Models\Setting;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Str;
 
 #[Layout('layouts.app')]
-// KITA HAPUS #[Title] STATIS DI SINI
 class TableManager extends Component
 {
     use WithPagination;
@@ -111,13 +110,12 @@ class TableManager extends Component
             ->latest()
             ->paginate(12);
 
-        // AMBIL PENGATURAN TOKO UNTUK DIKIRIM KE VIEW & TITLE
         $setting = Setting::first();
         $storeName = $setting->store_name ?? 'CaffePOS';
 
         return view('livewire.admin.table-manager', [
             'tables' => $tables,
-            'storeName' => $storeName // Kirim variabel ke Blade
-        ])->title('Manajemen Meja - ' . $storeName); // Atur Title Browser secara dinamis
+            'storeName' => $storeName
+        ])->title('Manajemen Meja - ' . $storeName); 
     }
 }

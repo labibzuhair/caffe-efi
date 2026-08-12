@@ -8,7 +8,6 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            // Tambahkan kolom batas jarak dengan nilai default 150 (meter)
             $table->integer('max_distance')->default(150)->after('longitude');
         });
     }

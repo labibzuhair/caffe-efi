@@ -18,27 +18,22 @@ class OrderMenu extends Component
     public $tableSession;
     public $table;
 
-    // Properti Khusus Split-Bill
     public $activeCustomers = [];
     public $selectedCustomerId;
     public $newPersonName = '';
 
     public function mount()
     {
-        // PROTEKSI: Jika tidak ada sesi customer, lempar kembali ke halaman depan
         if (!session()->has('customer_id')) {
             return redirect()->route('home');
         }
 
         $this->customer = SessionCustomer::with('tableSession.table', 'tableSession.customers')->find(session('customer_id'));
 
-        // Jika data hilang atau mejanya sudah selesai/ditutup kasir, usir ke halaman depan
         if (!$this->customer || $this->customer->tableSession->status !== 'active') {
             session()->forget('customer_id');
 
-            // ==========================================
-            // PERBAIKAN: Bersihkan juga keranjangnya saat sesi hangus
-            // ==========================================
+
             session()->forget('cart');
 
             return redirect()->route('home');
@@ -57,7 +52,6 @@ class OrderMenu extends Component
         $this->activeCustomers = $this->tableSession->customers()->get();
     }
 
-    // Fungsi untuk menambah teman dari HP yang sama
     public function addNewPerson()
     {
         $this->validate([
@@ -67,15 +61,14 @@ class OrderMenu extends Component
         $newCust = SessionCustomer::create([
             'table_session_id' => $this->tableSession->id,
             'display_name' => $this->newPersonName,
-            'device_identifier' => 'shared-from-' . $this->customer->id, // Penanda kalau ini ditambah dari HP teman
+            'device_identifier' => 'shared-from-' . $this->customer->id,
             'is_host' => false
         ]);
 
         $this->loadCustomers();
-        $this->selectedCustomerId = $newCust->id; // Otomatis pindahkan pilihan ke teman baru
-        $this->newPersonName = ''; // Kosongkan input
+        $this->selectedCustomerId = $newCust->id;
+        $this->newPersonName = '';
 
-        // Kirim event untuk menutup modal di frontend
         $this->dispatch('person-added');
     }
 
@@ -84,7 +77,6 @@ class OrderMenu extends Component
         $categories = Category::where('is_active', true)
             ->with([
                 'products' => function ($query) {
-                    // PERUBAHAN: Hapus ->where('is_active', true) agar menu HABIS tetap dikirim ke layar
                     $query->with('addons');
                 }
             ])->get();

@@ -36,10 +36,8 @@
             }
         }
 
-        // Jalankan saat load pertama
         applyTheme();
 
-        // Jalankan ulang setiap kali pindah halaman via wire:navigate
         document.addEventListener('livewire:navigated', () => {
             applyTheme();
         });

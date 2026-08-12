@@ -319,7 +319,6 @@
                 oldCartKey: null,
 
                 open(detail) {
-                    // Proteksi jika data dikirim dalam bentuk Array oleh Livewire
                     let data = detail[0] || detail;
 
                     this.product = data.product;
@@ -328,7 +327,6 @@
                     this.note = data.note || '';
                     this.oldCartKey = data.oldCartKey || null;
 
-                    // Kembalikan status checkbox Addons jika dalam mode EDIT
                     if (data.selectedAddonIds && data.selectedAddonIds.length > 0 && this.product
                         .addons) {
                         this.selectedAddons = this.product.addons.filter(a => data.selectedAddonIds
@@ -386,13 +384,13 @@
                         })),
                         note: this.note,
                         oldCartKey: this
-                            .oldCartKey // Kirim kunci lama agar dihapus dan diganti yang baru
+                            .oldCartKey
                     });
                     this.close();
                 }
             }));
         });
-    </script>   
+    </script>
 
     <style>
         .no-scrollbar::-webkit-scrollbar {

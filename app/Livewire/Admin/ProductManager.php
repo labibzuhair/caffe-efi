@@ -17,17 +17,15 @@ class ProductManager extends Component
 {
     use WithPagination, WithFileUploads;
 
-    // Variabel Form Utama
     public $name = '';
     public $category_id = '';
     public $price = '';
-    public $cogs = ''; // STATE BARU: Modal (HPP)
+    public $cogs = '';
     public $description = '';
     public $image;
     public $oldImage;
     public $is_active = true;
 
-    // STATE BARU: Manajemen Add-ons (Varian Menu)
     public $addons = [];
 
     public $productId = null;
@@ -46,9 +44,6 @@ class ProductManager extends Component
         $this->resetPage();
     }
 
-    // =====================================
-    // FUNGSI KONTROL ADD-ONS
-    // =====================================
     public function addAddon()
     {
         $this->addons[] = [
@@ -62,9 +57,8 @@ class ProductManager extends Component
     public function removeAddon($index)
     {
         unset($this->addons[$index]);
-        $this->addons = array_values($this->addons); // Reset urutan index array
+        $this->addons = array_values($this->addons);
     }
-    // =====================================
 
     public function resetForm()
     {
@@ -82,7 +76,6 @@ class ProductManager extends Component
             'description' => 'nullable|string|max:500',
             'image' => 'nullable|image|max:2048',
 
-            // Validasi baris per baris untuk Add-ons
             'addons.*.category' => 'required|string|max:100',
             'addons.*.name' => 'required|string|max:100',
             'addons.*.additional_price' => 'required|numeric|min:0',
@@ -106,7 +99,6 @@ class ProductManager extends Component
             $imagePath = $this->image->store('products', 'public');
         }
 
-        // 1. Simpan/Update Produk Utama
         $product = Product::updateOrCreate(
             ['id' => $this->productId],
             [
@@ -120,9 +112,7 @@ class ProductManager extends Component
             ]
         );
 
-        // 2. Simpan/Update Add-ons
-        // Cara termudah & teraman: Hapus semua addon lama milik produk ini, lalu masukkan yang baru dari form.
-        // Ini aman karena transaksi di order_item_addons menyimpan data foto kopi (snapshot).
+
         $product->addons()->delete();
         foreach ($this->addons as $addonData) {
             $product->addons()->create([
@@ -151,7 +141,6 @@ class ProductManager extends Component
         $this->is_active = $product->is_active;
         $this->isEditMode = true;
 
-        // Muat Add-ons ke dalam array form
         $this->addons = $product->addons->map(function ($addon) {
             return [
                 'category' => $addon->category,
@@ -176,7 +165,7 @@ class ProductManager extends Component
             Storage::disk('public')->delete($product->image);
         }
 
-        $product->delete(); // Karena cascadeOnDelete di migrasi, addons-nya akan otomatis ikut terhapus
+        $product->delete(); 
         session()->flash('message', 'Produk beserta variannya berhasil dihapus!');
     }
 

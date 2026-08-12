@@ -21,7 +21,6 @@ class CustomerJoinedTable implements ShouldBroadcastNow
 
     public function broadcastOn(): array
     {
-        // Menggunakan channel spesifik meja yang sama dengan CallCustomer
         return [
             new Channel('customer-table-' . $this->tableSessionId),
         ];

@@ -58,13 +58,10 @@ class UserManager extends Component
             'role' => $this->role,
         ];
 
-        // LAKUKAN PENGECEKAN PERUBAHAN EMAIL (OPSI 1)
         if ($this->isEditMode) {
-            $existingUser = clone User::find($this->userId); // Ambil data sebelum diupdate
+            $existingUser = clone User::find($this->userId);
 
-            // Jika email yang diketik BERBEDA dengan email lama di database
             if ($existingUser && $existingUser->email !== $this->email) {
-                // Putuskan paksa tautan sosial media untuk keamanan (SESUAIKAN SKEMA BARU)
                 $data['provider'] = null;
                 $data['provider_id'] = null;
                 $data['provider_token'] = null;
@@ -79,7 +76,6 @@ class UserManager extends Component
 
         $pesan = $this->isEditMode ? 'Data staf diperbarui!' : 'Staf baru ditambahkan!';
 
-        // Cek apakah aksi pemutusan sosmed tadi terpicu
         if ($this->isEditMode && array_key_exists('provider', $data) && $data['provider'] === null) {
             $pesan .= ' (Perhatian: Karena email diubah, tautan Sosmed staf ini telah direset otomatis demi keamanan).';
         }

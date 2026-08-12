@@ -133,7 +133,6 @@
                                 },
                                 (error) => {
                                     this.isLoading = false;
-                                    // Peringatan yang diperbarui untuk mengarahkan ke tombol bantuan
                                     alert('Gagal membaca GPS. Mohon izinkan akses lokasi. Klik ikon (?) di sebelah tombol pelacak untuk panduan lengkap.');
                                 }, { enableHighAccuracy: true, timeout: 10000 }
                             );

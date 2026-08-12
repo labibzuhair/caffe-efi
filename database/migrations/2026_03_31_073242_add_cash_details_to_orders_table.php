@@ -11,7 +11,6 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            // Menambahkan kolom untuk kalkulator kasir khusus metode Cash
             $table->integer('cash_received')->nullable()->after('payment_method')
                 ->comment('Jumlah uang yang diberikan pelanggan saat bayar Cash');
 

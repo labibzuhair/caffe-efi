@@ -6,13 +6,11 @@
     </x-slot>
 
     @php
-        // 1. TANGKAP FILTER DARI URL
         $filter = request('filter', 'bulanan');
         $selectedMonth = request('bulan', now()->month);
         $selectedYear = request('tahun', now()->year);
         $now = now();
 
-        // Logika Penentuan Rentang Tanggal
         if ($filter == 'mingguan') {
             $startDate = $now->copy()->subDays(6)->startOfDay();
             $endDate = $now->copy()->endOfDay();
@@ -27,7 +25,6 @@
             $periodLabel = $startDate->translatedFormat('F Y');
         }
 
-        // Ambil daftar tahun dari data order agar filter dinamis
         $availableYears = \App\Models\Order::selectRaw('YEAR(created_at) as year')
             ->distinct()
             ->orderBy('year', 'desc')
@@ -36,16 +33,13 @@
             $availableYears = [now()->year];
         }
 
-        // 2. AMBIL DATA PESANAN LUNAS
         $orders = \App\Models\Order::whereBetween('created_at', [$startDate, $endDate])
             ->where('payment_status', 'paid')
             ->get();
         $omset = $orders->sum('total_price');
 
-        // 3. AMBIL PENGELUARAN (OPEX)
         $pengeluaran = \App\Models\Expense::whereBetween('expense_date', [$startDate, $endDate])->sum('amount');
 
-        // 4. AMBIL HPP
         $hppItems = \App\Models\OrderItem::with(['selectedAddons', 'product.category'])
             ->whereIn('order_id', $orders->pluck('id'))
             ->get();
@@ -61,7 +55,6 @@
 
         $labaBersih = $omset - $totalHpp - $pengeluaran;
 
-        // 5. PERSIAPAN DATA GRAFIK
         $chartLabels = [];
         $chartOmset = [];
         $chartPengeluaran = [];
@@ -335,7 +328,7 @@
 
                     const isDark = document.documentElement.classList.contains('dark');
                     const textColor = isDark ? '#94a3b8' : '#64748b';
-                    const tooltipTheme = isDark ? 'dark' : 'light'; // Simpan tema tooltip
+                    const tooltipTheme = isDark ? 'dark' : 'light';
 
                     const finOptions = {
                         series: [{
@@ -384,7 +377,7 @@
                             }
                         },
                         tooltip: {
-                            theme: tooltipTheme // Paksa tema tooltip di awal
+                            theme: tooltipTheme
                         },
                         theme: {
                             mode: isDark ? 'dark' : 'light'
@@ -406,7 +399,7 @@
                             }
                         },
                         tooltip: {
-                            theme: tooltipTheme // Paksa tema tooltip di awal
+                            theme: tooltipTheme
                         },
                         theme: {
                             mode: isDark ? 'dark' : 'light'
@@ -430,7 +423,6 @@
                 updateTheme(isDark) {
                     const mode = isDark ? 'dark' : 'light';
 
-                    // Update juga tema tooltip-nya saat pergantian mode gelap/terang
                     if (this.finChartInstance) {
                         this.finChartInstance.updateOptions({
                             theme: {

@@ -4,7 +4,7 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow; // KUNCI UTAMA: Gunakan ShouldBroadcastNow!
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow; 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -19,7 +19,6 @@ class OrderPlaced implements ShouldBroadcastNow
         $this->order = $order;
     }
 
-    // Saluran publik agar Dapur bisa mendengarnya tanpa Auth rumit
     public function broadcastOn(): array
     {
         return [

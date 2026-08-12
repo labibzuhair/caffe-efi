@@ -12,11 +12,9 @@ return new class extends Migration {
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            // Data Utama
             $table->string('store_name')->default('CaffePOS');
             $table->decimal('tax_percentage', 5, 2)->default(0);
 
-            // Data Tambahan (Kontak, SEO, dll)
             $table->string('logo')->nullable();
             $table->string('contact_phone')->nullable();
             $table->string('contact_email')->nullable();

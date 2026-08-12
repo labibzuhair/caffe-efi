@@ -16,13 +16,12 @@ new #[Layout('layouts.guest')] class extends Component {
 
         Session::regenerate();
 
-        // LOGIKA BARU: Tentukan rute tujuan berdasarkan role
         $userRole = auth()->user()->role;
 
         $redirectRoute = match ($userRole) {
             'kitchen' => route('dapur', absolute: false),
             'cashier' => route('kasir', absolute: false),
-            default => route('dashboard', absolute: false), // Admin atau role lain
+            default => route('dashboard', absolute: false),
         };
 
         $this->redirectIntended(default: $redirectRoute, navigate: true);

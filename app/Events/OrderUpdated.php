@@ -21,7 +21,6 @@ class OrderUpdated implements ShouldBroadcastNow
 
     public function broadcastOn(): array
     {
-        // Broadcast HANYA ke meja yang bersangkutan
         return [
             new Channel('customer-table-' . $this->tableSessionId),
         ];

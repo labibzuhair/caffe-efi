@@ -16,7 +16,7 @@ class OrderReadyForPickup implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $order;
-    public $message; // Pesan yang akan ditampilkan di layar kasir
+    public $message;
 
     /**
      * Create a new event instance.
@@ -34,7 +34,6 @@ class OrderReadyForPickup implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        // Broadcast ke channel publik 'cashier-channel'
         return [
             new Channel('cashier-channel'),
         ];

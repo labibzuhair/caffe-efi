@@ -78,7 +78,7 @@ class ReportManager extends Component
             'totalRevenue' => $totalRevenue,
             'totalCogs' => $totalCogs,
             'grossProfit' => $grossProfit,
-            'expensesList' => $expensesList, // Kirim rincian pengeluaran ke Blade
+            'expensesList' => $expensesList, 
             'totalExpenses' => $totalExpenses,
             'netProfit' => $netProfit,
         ]);

@@ -210,7 +210,6 @@
     </div>
 
     <script>
-        // PENAMBAHAN PARAMETER qrToken
         window.printQR = function(elementId, tableName, qrToken) {
             const qrElement = document.getElementById(elementId);
             if (!qrElement) return;
@@ -225,7 +224,6 @@
 
             const storeName = @js($storeName);
 
-            // LOGIKA URL ALTERNATIF
             const baseUrl = window.location.origin;
             const cleanUrl = baseUrl.replace(/^https?:\/\//, '');
             const shortUrl = `${cleanUrl}/meja/${qrToken}`;

@@ -15,7 +15,7 @@ class CallCustomer implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $tableSessionId;
-    public $message; // Pesan khusus dari kasir untuk pelanggan
+    public $message;
 
     /**
      * Create a new event instance.
@@ -33,8 +33,7 @@ class CallCustomer implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        // Broadcast ke channel spesifik untuk meja tersebut saja
-        // Agar HP di meja lain tidak ikut berbunyi!
+      
         return [
             new Channel('customer-table-' . $this->tableSessionId),
         ];

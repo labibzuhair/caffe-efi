@@ -77,7 +77,6 @@ class SettingManager extends Component
             'address' => 'nullable|string|max:500',
             'footer_text' => 'nullable|string|max:255',
 
-            // PERBAIKAN: Ubah validasi string menjadi numeric agar menerima float GPS
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
 

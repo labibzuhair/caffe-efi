@@ -8,7 +8,6 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Mengubah tipe kolom menjadi TEXT agar bisa menampung token panjang
             $table->text('provider_token')->nullable()->change();
         });
     }
@@ -16,7 +15,6 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Mengembalikan ke STRING (VARCHAR) jika di-rollback
             $table->string('provider_token')->nullable()->change();
         });
     }

@@ -11,13 +11,11 @@ class Order extends Model
 
     protected $guarded = [];
 
-    // Relasi ke Sesi Meja
     public function session()
     {
         return $this->belongsTo(TableSession::class, 'table_session_id');
     }
 
-    // Relasi ke Detail Item Pesanan
     public function items()
     {
         return $this->hasMany(OrderItem::class);

@@ -9,16 +9,13 @@ return new class extends Migration {
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            // Menghubungkan pesanan ke Sesi Meja, BUKAN meja langsung
             $table->foreignId('table_session_id')->nullable()->constrained()->nullOnDelete();
 
             $table->string('order_number')->unique();
             $table->integer('total_price')->default(0);
 
-            // Status Keseluruhan Pesanan
             $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
 
-            // Status Pembayaran
             $table->enum('payment_status', ['unpaid', 'paid'])->default('unpaid');
             $table->string('payment_method')->nullable();
             $table->string('midtrans_snap_token')->nullable();

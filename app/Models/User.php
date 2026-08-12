@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-// KITA TAMBAHKAN KOLOM-KOLOM BARU DI SINI
 #[Fillable([
     'name',
     'email',

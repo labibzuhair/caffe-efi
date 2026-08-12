@@ -8,7 +8,7 @@ use App\Models\SessionCustomer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderItemAddon;
-use App\Models\CartItem; // Panggil model CartItem baru kita
+use App\Models\CartItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -19,14 +19,12 @@ class FloatingCart extends Component
     public $cart = [];
     public $isOpen = false;
 
-    // Properti hitung-hitungan
     public $subtotal = 0;
     public $taxAmount = 0;
     public $total = 0;
     public $totalItems = 0;
     public $taxPercentage = 0;
 
-    // KUNCI UTAMA WEBSOCKET: public property ini wajib ada agar bisa di-bind ke #[On]
     public $tableSessionId;
 
     public function mount()
@@ -38,27 +36,22 @@ class FloatingCart extends Component
             $customer = SessionCustomer::find(session('customer_id'));
             if ($customer) {
                 $this->tableSessionId = $customer->table_session_id;
-                $this->loadCart(); // Pemuatan awal dari database
+                $this->loadCart();
             }
         }
     }
 
-    // =================================================================
-    // LISTENER WEBSOCKET: Memperbarui keranjang saat teman meja mengubahnya
-    // =================================================================
     #[On('refreshCart')]
     public function refreshCart()
     {
         $this->loadCart();
     }
 
-    // FUNGSI INTI: Membaca tabel 'cart_items' dan merapikannya untuk UI
     public function loadCart()
     {
         if (!$this->tableSessionId)
             return;
 
-        // Ambil semua isi keranjang dari database beserta data customer dan produknya
         $items = CartItem::with(['customer', 'product'])
             ->where('table_session_id', $this->tableSessionId)
             ->get();
@@ -70,7 +63,6 @@ class FloatingCart extends Component
         foreach ($items as $item) {
             $customerId = $item->session_customer_id;
 
-            // Kelompokkan berdasarkan ID Customer
             if (!isset($groupedCart[$customerId])) {
                 $groupedCart[$customerId] = [
                     'name' => $item->customer->display_name ?? 'Tamu',
@@ -78,7 +70,6 @@ class FloatingCart extends Component
                 ];
             }
 
-            // Hitung harga final (Harga dasar + harga addon)
             $finalPrice = floatval($item->base_price);
             if (!empty($item->addons)) {
                 foreach ($item->addons as $addon) {
@@ -87,7 +78,7 @@ class FloatingCart extends Component
             }
 
             $groupedCart[$customerId]['items'][$item->id] = [
-                'id' => $item->id, // Kita pakai ID dari database sekarang!
+                'id' => $item->id,
                 'product_id' => $item->product_id,
                 'name' => $item->product->name ?? 'Menu Dihapus',
                 'base_price' => floatval($item->base_price),
@@ -110,7 +101,6 @@ class FloatingCart extends Component
         $this->totalItems = $tempTotalItems;
     }
 
-    // MENGEDIT MENU YANG ADA DI KERANJANG
     public function editItem($cartItemId)
     {
         $item = CartItem::with('product.addons')->find($cartItemId);
@@ -121,12 +111,11 @@ class FloatingCart extends Component
                 'qty' => $item->qty,
                 'selectedAddonIds' => array_column($item->addons ?? [], 'id'),
                 'note' => $item->note ?? '',
-                'oldCartKey' => $item->id // Kirim ID database ke modal
+                'oldCartKey' => $item->id
             ]);
         }
     }
 
-    // MENAMBAHKAN / MENGUPDATE MENU KE DATABASE
     #[On('add-to-cart')]
     public function addToCart($productId, $customerId, $qty = 1, $addons = [], $note = '', $oldCartItemId = null)
     {
@@ -134,12 +123,10 @@ class FloatingCart extends Component
         if (!$product || !$product->is_active || !$this->tableSessionId)
             return;
 
-        // JIKA EDIT: Hapus data lama dari database
         if ($oldCartItemId) {
             CartItem::where('id', $oldCartItemId)->where('table_session_id', $this->tableSessionId)->delete();
         }
 
-        // Siapkan struktur addons
         $addonDetails = [];
         foreach ($addons as $ad) {
             $addonDetails[] = [
@@ -150,7 +137,6 @@ class FloatingCart extends Component
             ];
         }
 
-        // Cek apakah persis ada menu yang sama (produk, customer, catatan) di keranjang
         $safeNote = trim($note);
         $existingItem = CartItem::where('table_session_id', $this->tableSessionId)
             ->where('session_customer_id', $customerId)
@@ -158,7 +144,6 @@ class FloatingCart extends Component
             ->where('note', $safeNote)
             ->get()
             ->first(function ($item) use ($addonDetails) {
-                // Bandingkan ID addon (pastikan isinya sama)
                 $dbAddonIds = collect($item->addons)->pluck('id')->sort()->values()->toArray();
                 $newAddonIds = collect($addonDetails)->pluck('id')->sort()->values()->toArray();
                 return $dbAddonIds === $newAddonIds;
@@ -180,7 +165,7 @@ class FloatingCart extends Component
         }
 
         $this->loadCart();
-        event(new \App\Events\CartUpdated($this->tableSessionId)); // Sebarkan sinyal ke HP teman!
+        event(new \App\Events\CartUpdated($this->tableSessionId));
     }
 
     public function increase($cartItemId)
@@ -219,7 +204,6 @@ class FloatingCart extends Component
         if (!$this->tableSessionId || count($this->cart) === 0)
             return;
 
-        // Ambil SEMUA keranjang milik meja ini langsung dari database
         $cartItems = CartItem::where('table_session_id', $this->tableSessionId)->get();
         if ($cartItems->isEmpty())
             return;
@@ -243,7 +227,6 @@ class FloatingCart extends Component
 
             $cartTotal = 0;
 
-            // Pindahkan data dari CartItem -> OrderItem
             foreach ($cartItems as $item) {
                 $orderItem = OrderItem::create([
                     'order_id' => $order->id,
@@ -276,7 +259,6 @@ class FloatingCart extends Component
 
             $order->increment('total_price', $cartTotal);
 
-            // KOSONGKAN KERANJANG DATABASE
             CartItem::where('table_session_id', $this->tableSessionId)->delete();
 
             DB::commit();
@@ -288,11 +270,9 @@ class FloatingCart extends Component
 
         $this->isOpen = false;
 
-        // Beritahu dapur ada pesanan (Bunyikan lonceng dapur)
         try {
             event(new \App\Events\OrderPlaced($order));
 
-            // Beritahu HP teman di meja bahwa keranjang sudah dicheckout dan tagihan baru dibuat
             event(new \App\Events\CartUpdated($this->tableSessionId));
             event(new \App\Events\OrderUpdated($this->tableSessionId));
         } catch (\Exception $e) {

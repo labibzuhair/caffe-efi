@@ -353,7 +353,6 @@
     <script>
         document.addEventListener('livewire:initialized', () => {
 
-            // 1. DETEKSI iOS BROWSER & MUNCULKAN BANNER PWA
             const isIos = () => {
                 const userAgent = window.navigator.userAgent.toLowerCase();
                 return /iphone|ipad|ipod/.test(userAgent);
@@ -365,7 +364,6 @@
                 document.getElementById('ios-pwa-banner').classList.remove('hidden');
             }
 
-            // 2. MINTA IZIN NOTIFIKASI SISTEM (SYSTEM PUSH)
             if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !==
                 "denied") {
                 Notification.requestPermission();

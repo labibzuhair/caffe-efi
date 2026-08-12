@@ -7,7 +7,6 @@
     <title>Struk #{{ $order->order_number }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Sembunyikan elemen lain saat masuk mode cetak (CTRL+P) */
         @media print {
             body {
                 background-color: white;
@@ -19,14 +18,11 @@
                 display: none !important;
             }
 
-            /* PERINTAH PAKSA UKURAN KERTAS UNTUK BROWSER */
             @page {
                 size: 58mm auto;
-                /* Ganti ke 80mm auto jika printernya 80mm */
                 margin: 0mm;
             }
 
-            /* Mencegah satu blok terpotong di tengah antar kertas */
             .page-break-inside-avoid {
                 page-break-inside: avoid;
                 break-inside: avoid;
@@ -41,21 +37,18 @@
         $setting = \App\Models\Setting::first();
         $taxPercentage = $setting->tax_percentage ?? 0;
 
-        // Kalkulasi Subtotal, Pajak, Total, dan Split Bill
         $subtotal = 0;
-        $personSubtotals = []; // Menyimpan subtotal murni per orang
+        $personSubtotals = [];
 
         foreach ($order->items as $item) {
             $itemTotal = $item->price_at_order * $item->qty;
 
-            // Tambahkan harga Addons ke itemTotal
             foreach ($item->selectedAddons as $addon) {
-                $itemTotal += $addon->addon_price * $item->qty; // Asumsi harga addon dikali qty
+                $itemTotal += $addon->addon_price * $item->qty;
             }
 
             $subtotal += $itemTotal;
 
-            // Hitung Split Bill berdasarkan nama pelanggan (Subtotal Murni dulu)
             $customerName = $item->customer->display_name ?? 'Tamu';
             if (!isset($personSubtotals[$customerName])) {
                 $personSubtotals[$customerName] = 0;
@@ -63,11 +56,9 @@
             $personSubtotals[$customerName] += $itemTotal;
         }
 
-        // Hitung Pajak Global dan Total
         $taxAmount = ($subtotal * $taxPercentage) / 100;
         $total = $subtotal + $taxAmount;
 
-        // Hitung Pajak per Orang dan Gabungkan Rinciannya
         $personDetails = [];
         foreach ($personSubtotals as $name => $pSubtotal) {
             $pTax = ($pSubtotal * $taxPercentage) / 100;
@@ -207,11 +198,10 @@
     </div>
 
     <script>
-        // Otomatis memicu dialog print saat halaman selesai dimuat
         window.onload = function() {
             setTimeout(() => {
                 window.print();
-            }, 500); // Jeda setengah detik memastikan Tailwind termuat sempurna
+            }, 500);
         }
     </script>
 </body>

@@ -67,7 +67,7 @@ class ExpenseManager extends Component
                 'category' => $this->category,
                 'description' => $this->description,
                 'amount' => $this->amount,
-                'user_id' => Auth::id(), // Catat siapa yang input
+                'user_id' => Auth::id(), 
             ]
         );
 
@@ -100,7 +100,6 @@ class ExpenseManager extends Component
             ->orderBy('expense_date', 'desc')
             ->paginate(10);
 
-        // Hitung total pengeluaran bulan ini
         $totalExpenses = Expense::whereMonth('expense_date', $this->filterMonth)
             ->whereYear('expense_date', $this->filterYear)
             ->sum('amount');

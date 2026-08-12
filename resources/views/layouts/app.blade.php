@@ -43,10 +43,8 @@
             }
         }
 
-        // 1. Jalankan saat pertama kali halaman dimuat (Hard Refresh)
         applyTheme();
 
-        // 2. Jalankan ulang setiap kali Livewire selesai berpindah halaman (SPA Navigate)
         document.addEventListener('livewire:navigated', () => {
             applyTheme();
         });

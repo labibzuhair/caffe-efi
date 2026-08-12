@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
-    protected $guarded = []; // Buka semua kolom
+    protected $guarded = []; 
 
     public function user()
     {

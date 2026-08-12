@@ -27,19 +27,16 @@ new class extends Component {
     public function loadNotifications()
     {
         if (auth()->check() && in_array(auth()->user()->role, ['admin', 'cashier'])) {
-            // 1. AMBIL ITEM 'PERLU DIAMBIL' (Dikelompokkan per Order)
             $rawPickupItems = OrderItem::with(['order.session.table', 'product'])
                 ->where('status', 'waiting_pickup')
                 ->orderBy('updated_at', 'asc')
                 ->get();
 
-            // Mengelompokkan berdasarkan ID Pesanan (Order ID)
             $this->pickupItems = $rawPickupItems
                 ->groupBy('order_id')
                 ->map(function ($items) {
                     $firstItem = $items->first();
 
-                    // Membuat ringkasan menu (Contoh: "2x Nasi Goreng, 1x Es Teh")
                     $summary = $items
                         ->map(function ($item) {
                             return $item->qty . 'x ' . $item->product->name;
@@ -52,18 +49,17 @@ new class extends Component {
                         'total_qty' => $items->sum('qty'),
                         'summary' => $summary,
                         'updated_at' => $firstItem->updated_at,
-                        'item_ids' => $items->pluck('id')->toArray(), // Simpan ID item untuk di-update nanti
+                        'item_ids' => $items->pluck('id')->toArray(),
                     ];
                 })
                 ->values()
-                ->all(); // Konversi kembali ke array biasa
+                ->all();
 
-            // 2. AMBIL ITEM 'RIWAYAT SELESAI' (Dikelompokkan per Order)
             $rawServedItems = OrderItem::with(['order.session.table', 'product'])
                 ->where('status', 'served')
                 ->whereDate('updated_at', today())
                 ->orderBy('updated_at', 'desc')
-                ->take(30) // Ambil lebih banyak karena akan dikelompokkan
+                ->take(30)
                 ->get();
 
             $this->servedItems = $rawServedItems
@@ -91,7 +87,6 @@ new class extends Component {
 
     public function markAsServed($itemIds)
     {
-        // $itemIds sekarang adalah array dari ID item-item yang tergabung dalam satu pesanan
         if (is_array($itemIds) && count($itemIds) > 0) {
             OrderItem::whereIn('id', $itemIds)->update(['status' => 'served']);
             $this->loadNotifications();

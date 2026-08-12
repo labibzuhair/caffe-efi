@@ -25,12 +25,9 @@ class Dashboard extends Component
             $item->update(['status' => $newStatus]);
             $this->checkAndCompleteOrder($item->order_id);
 
-            // ==========================================
-            // PERBAIKAN: Beritahu HANYA meja yang bersangkutan
-            // ==========================================
+
             try {
-                // Hapus ini: event(new \App\Events\OrderPlaced($item->order));
-                // Ganti menjadi ini:
+
                 event(new \App\Events\OrderUpdated($item->order->table_session_id));
             } catch (\Exception $e) {
             }
@@ -43,7 +40,6 @@ class Dashboard extends Component
         if (!$order)
             return;
 
-        // Cari HANYA item yang berstatus ready_to_serve (hijau di layar koki)
         $readyItems = $order->items->where('status', 'ready_to_serve');
 
         if ($readyItems->isEmpty())
@@ -58,7 +54,6 @@ class Dashboard extends Component
 
         $message = "Pesanan {$tableName} siap diambil: {$menuList}.";
 
-        // Ubah status menjadi waiting_pickup agar HILANG dari Dapur dan MASUK ke Lonceng Kasir
         foreach ($readyItems as $item) {
             $item->update(['status' => 'waiting_pickup']);
         }
@@ -94,7 +89,6 @@ class Dashboard extends Component
 
     public function render()
     {
-        // Pastikan Dapur hanya melihat: pending, cooking, dan ready_to_serve
         $itemConstraints = function ($query) {
             $query->whereIn('status', ['pending', 'cooking', 'ready_to_serve']);
 

@@ -91,10 +91,8 @@
                             $oldestItem = $order->items->sortBy('created_at')->first();
                             $hasPending = $order->items->contains('status', 'pending');
 
-                            // Hitung yang sudah ready (HIJAU) untuk dipanggil ke Kasir
                             $readyCount = $order->items->where('status', 'ready_to_serve')->count();
 
-                            // Ringkasan semua item yang sedang TAMPIL di dapur
                             $visibleItems = $order->items->whereIn('status', ['pending', 'cooking', 'ready_to_serve']);
                             $summaryCounts = [];
 
@@ -254,7 +252,7 @@
                 if (window.Echo) {
                     window.Echo.channel('kitchen-channel')
                         .listen('OrderPlaced', (e) => {
-                            Livewire.dispatch('refreshOrders'); // Suruh dapur refresh
+                            Livewire.dispatch('refreshOrders');
                         });
                 } else {
                     setTimeout(initEcho, 500);

@@ -21,13 +21,11 @@ class OrderItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    // Relasi ke Pelanggan Pemilik Makanan (Split Bill)
     public function customer()
     {
         return $this->belongsTo(SessionCustomer::class, 'session_customer_id');
     }
 
-    // KODE BARU YANG HARUS DITAMBAHKAN (Relasi ke Varian/Add-ons)
     public function selectedAddons()
     {
         return $this->hasMany(OrderItemAddon::class);

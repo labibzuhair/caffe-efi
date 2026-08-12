@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('session_customers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('table_session_id')->constrained()->cascadeOnDelete();
-            $table->string('display_name'); // Nama panggilan user
-            $table->string('device_identifier'); // Fingerprint browser untuk reconnect
-            $table->boolean('is_host')->default(false); // Penanda scan pertama
+            $table->string('display_name');
+            $table->string('device_identifier');
+            $table->boolean('is_host')->default(false);
             $table->timestamps();
         });
     }

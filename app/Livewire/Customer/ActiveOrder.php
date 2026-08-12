@@ -8,7 +8,7 @@ use App\Models\Setting;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Livewire\Attributes\On; // WAJIB DITAMBAHKAN UNTUK REAL-TIME
+use Livewire\Attributes\On; 
 
 #[Layout('layouts.customer')]
 #[Title('Pesanan Saya')]

@@ -9,6 +9,5 @@ class Setting extends Model
 {
     use HasFactory;
 
-    // Membuka gembok keamanan mass-assignment untuk semua kolom di tabel ini
     protected $guarded = [];
 }

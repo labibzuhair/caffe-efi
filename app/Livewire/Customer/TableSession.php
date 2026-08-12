@@ -18,7 +18,6 @@ class TableSession extends Component
     public $table;
     public $displayName = '';
 
-    // Variabel untuk menyimpan daftar nama yang sudah bergabung di meja ini
     public $existingNames = [];
 
     public $latitude;
@@ -30,10 +29,8 @@ class TableSession extends Component
         $this->qrToken = $qr_token;
         $this->table = Table::where('qr_token', $qr_token)->firstOrFail();
 
-        // Cek apakah meja ini sedang aktif dan memiliki pelanggan
         $activeSession = SessionModel::where('table_id', $this->table->id)->where('status', 'active')->first();
         if ($activeSession) {
-            // Ambil semua nama pelanggan yang sudah bergabung di sesi ini
             $this->existingNames = $activeSession->customers()->pluck('display_name')->toArray();
         }
 
@@ -56,9 +53,6 @@ class TableSession extends Component
             'latitude.required' => 'Mohon izinkan akses lokasi (GPS) untuk memesan.',
         ]);
 
-        // ==========================================
-        // LOGIKA GEOFENCING DINAMIS
-        // ==========================================
         $setting = Setting::first();
 
         if ($setting && $setting->latitude && $setting->longitude) {
@@ -89,22 +83,18 @@ class TableSession extends Component
             }
         }
 
-        // ==========================================
-        // LOLOS, BUAT ATAU GABUNG SESI
-        // ==========================================
+
         $activeSession = SessionModel::firstOrCreate(
             ['table_id' => $this->table->id, 'status' => 'active']
         );
 
         $this->table->update(['status' => 'occupied']);
 
-        // LOGIKA BARU: Cari apakah nama ini sudah ada di sesi ini (mengabaikan huruf besar/kecil)
         $customer = SessionCustomer::where('table_session_id', $activeSession->id)
             ->whereRaw('LOWER(display_name) = ?', [strtolower($this->displayName)])
             ->first();
 
         if (!$customer) {
-            // Jika nama belum ada, buat pelanggan baru
             $isHost = $activeSession->customers()->count() === 0;
             $customer = SessionCustomer::create([
                 'table_session_id' => $activeSession->id,
@@ -113,7 +103,6 @@ class TableSession extends Component
                 'is_host' => $isHost
             ]);
         } else {
-            // Jika nama sudah ada, update identifier device-nya saja
             $customer->update([
                 'device_identifier' => request()->ip() . '|' . request()->userAgent()
             ]);

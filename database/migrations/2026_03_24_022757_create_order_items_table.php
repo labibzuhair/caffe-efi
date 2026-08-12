@@ -12,14 +12,12 @@ return new class extends Migration {
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
 
-            // INI KUNCI SPLIT BILL: Mengikat makanan ke orang spesifik di meja
             $table->foreignId('session_customer_id')->nullable()->constrained()->nullOnDelete();
 
-            $table->integer('qty'); // Sesuai dengan Seeder kamu ('qty' bukan 'quantity')
-            $table->integer('price_at_order'); // Sesuai Seeder ('price_at_order' bukan 'price')
+            $table->integer('qty');
+            $table->integer('price_at_order');
             $table->string('notes')->nullable();
 
-            // INI KUNCI PARTIAL FULFILLMENT (Status per makanan)
             $table->enum('status', ['pending', 'cooking', 'ready_to_serve', 'served', 'cancelled'])->default('pending');
 
             $table->timestamps();

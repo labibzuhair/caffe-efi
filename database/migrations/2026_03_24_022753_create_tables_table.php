@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
             $table->string('table_number');
-            $table->string('qr_token')->unique(); // Untuk scan URL
+            $table->string('qr_token')->unique(); 
             $table->enum('status', ['available', 'occupied', 'cleaning'])->default('available');
             $table->timestamps();
         });

@@ -85,7 +85,6 @@
 
                     $isWaitingOnly = $displayStatus === 'occupied' && !$hasOrders;
 
-                    // Pewarnaan Border Dinamis
                     $borderColor = 'border-emerald-500';
                     if ($isWaitingOnly) {
                         $borderColor = 'border-blue-500';
