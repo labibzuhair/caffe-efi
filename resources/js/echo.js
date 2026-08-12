@@ -3,6 +3,9 @@ import Pusher from 'pusher-js';
 
 window.Pusher = Pusher;
 
+// TAMBAHKAN BARIS INI UNTUK DEBUGGING:
+Pusher.logToConsole = true;
+
 window.Echo = new Echo({
     broadcaster: 'pusher',
     key: import.meta.env.VITE_PUSHER_APP_KEY,
