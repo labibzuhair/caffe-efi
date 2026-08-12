@@ -31,10 +31,10 @@
                 <span
                     class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-emerald-600 transition-transform duration-300"
                     :class="animate ? 'scale-150' : 'scale-100'">
-                    {{ $this->totalItems }}
+                    {{ $totalItems }}
                 </span>
             </div>
-            <span class="font-bold hidden sm:block">Rp {{ number_format($this->total, 0, ',', '.') }}</span>
+            <span class="font-bold hidden sm:block">Rp {{ number_format($total, 0, ',', '.') }}</span>
         </button>
     @endif
 
@@ -57,7 +57,7 @@
                     <div
                         class="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
                         <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">Pesanan
-                            Meja</h2>
+                            Bersama</h2>
                         <button @click="open = false"
                             class="text-slate-400 hover:text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-full p-2">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,12 +89,12 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-xs font-bold text-blue-800 dark:text-blue-300">Ingin tambah catatan?
+                                    <p class="text-xs font-bold text-blue-800 dark:text-blue-300">Live Shared Cart 🔄
                                     </p>
-                                    <p class="text-[11px] text-blue-600 dark:text-blue-400 mt-0.5 leading-relaxed">Punya
-                                        alergi, atau ingin pesan khusus (misal: "Jangan pakai seledri")? Klik tombol
-                                        <span class="font-bold text-blue-700 dark:text-blue-300">Ubah</span> di bawah
-                                        menu Anda untuk menambahkannya.</p>
+                                    <p class="text-[11px] text-blue-600 dark:text-blue-400 mt-0.5 leading-relaxed">
+                                        Anda bisa melihat pesanan teman semeja Anda di sini secara real-time. Klik
+                                        "Ubah" untuk menambahkan catatan atau alergi.
+                                    </p>
                                 </div>
                             </div>
 
@@ -102,7 +102,6 @@
                                 @foreach ($cart as $customerId => $customerData)
                                     <div
                                         class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700/50">
-
                                         <div
                                             class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-100 dark:border-slate-700">
                                             <div
@@ -126,7 +125,7 @@
                                         </div>
 
                                         <ul class="space-y-4">
-                                            @foreach ($customerData['items'] as $cartKey => $item)
+                                            @foreach ($customerData['items'] as $cartItemId => $item)
                                                 <li class="flex items-start gap-3">
                                                     <div
                                                         class="h-12 w-12 shrink-0 rounded-lg bg-slate-100 dark:bg-slate-700 overflow-hidden flex items-center justify-center mt-1">
@@ -189,25 +188,22 @@
                                                         <div class="flex items-center gap-3 mt-3">
                                                             <div
                                                                 class="flex items-center border border-slate-200 dark:border-slate-600 rounded-md overflow-hidden">
-                                                                <button
-                                                                    wire:click="decrease({{ $customerId }}, '{{ $cartKey }}')"
+                                                                <button wire:click="decrease({{ $item['id'] }})"
                                                                     class="px-2 py-0.5 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200">-</button>
                                                                 <span
                                                                     class="px-2 text-xs font-bold">{{ $item['qty'] ?? 1 }}</span>
-                                                                <button
-                                                                    wire:click="increase({{ $customerId }}, '{{ $cartKey }}')"
+                                                                <button wire:click="increase({{ $item['id'] }})"
                                                                     class="px-2 py-0.5 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200">+</button>
                                                             </div>
 
-                                                            <button
-                                                                wire:click="editItem({{ $customerId }}, '{{ $cartKey }}')"
+                                                            <button wire:click="editItem({{ $item['id'] }})"
                                                                 class="text-[10px] px-2 py-1 rounded bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 font-bold hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors border border-blue-200 dark:border-blue-800">
-                                                                Ubah / Tambah Catatan
+                                                                Ubah
                                                             </button>
-
-                                                            <button
-                                                                wire:click="remove({{ $customerId }}, '{{ $cartKey }}')"
-                                                                class="text-[10px] font-bold text-red-500 hover:text-red-600 hover:underline">Hapus</button>
+                                                            <button wire:click="remove({{ $item['id'] }})"
+                                                                class="text-[10px] font-bold text-red-500 hover:text-red-600 hover:underline">
+                                                                Hapus
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -223,22 +219,22 @@
                         <div class="border-t border-slate-200 dark:border-slate-800 p-6 bg-white dark:bg-slate-900">
                             <div class="space-y-1.5 mb-4">
                                 <div class="flex justify-between text-sm text-slate-500">
-                                    <p>Subtotal (Belum Pajak)</p>
+                                    <p>Subtotal Semua (Belum Pajak)</p>
                                     <p class="font-semibold text-slate-700 dark:text-slate-300">Rp
-                                        {{ number_format($this->subtotal, 0, ',', '.') }}</p>
+                                        {{ number_format($subtotal, 0, ',', '.') }}</p>
                                 </div>
                                 @if ($taxPercentage > 0)
                                     <div class="flex justify-between text-sm text-slate-500">
                                         <p>Estimasi Pajak ({{ $taxPercentage }}%)</p>
                                         <p class="font-semibold text-slate-700 dark:text-slate-300">Rp
-                                            {{ number_format($this->taxAmount, 0, ',', '.') }}</p>
+                                            {{ number_format($taxAmount, 0, ',', '.') }}</p>
                                     </div>
                                 @endif
                                 <div
                                     class="flex justify-between text-lg font-black text-slate-900 dark:text-white pt-2 border-t border-slate-100 dark:border-slate-800">
-                                    <p>Total Belanja</p>
+                                    <p>Total Belanja Meja</p>
                                     <p class="text-emerald-600 dark:text-emerald-400">Rp
-                                        {{ number_format($this->total, 0, ',', '.') }}</p>
+                                        {{ number_format($total, 0, ',', '.') }}</p>
                                 </div>
                             </div>
 

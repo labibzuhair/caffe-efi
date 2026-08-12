@@ -122,6 +122,8 @@ class TableSession extends Component
         session(['customer_id' => $customer->id]);
         session()->forget('cart');
 
+        event(new \App\Events\CustomerJoinedTable($activeSession->id));
+
         return redirect()->route('customer.menu');
     }
 

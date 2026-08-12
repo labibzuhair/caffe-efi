@@ -5,9 +5,10 @@ namespace App\Livewire\Customer;
 use App\Models\Category;
 use App\Models\SessionCustomer;
 use App\Models\Setting;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
+use Livewire\Component;
 
 #[Layout('layouts.customer')]
 #[Title('Menu Pemesanan')]
@@ -49,6 +50,8 @@ class OrderMenu extends Component
         $this->loadCustomers();
         $this->selectedCustomerId = $this->customer->id;
     }
+
+    #[On('echo:customer-table-{tableSession.id},.customer.joined')]
     public function loadCustomers()
     {
         $this->activeCustomers = $this->tableSession->customers()->get();

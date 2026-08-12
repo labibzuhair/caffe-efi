@@ -25,9 +25,13 @@ class Dashboard extends Component
             $item->update(['status' => $newStatus]);
             $this->checkAndCompleteOrder($item->order_id);
 
-            // Beritahu jaringan WebSocket (termasuk Kasir & Pelanggan)
+            // ==========================================
+            // PERBAIKAN: Beritahu HANYA meja yang bersangkutan
+            // ==========================================
             try {
-                event(new \App\Events\OrderPlaced($item->order));
+                // Hapus ini: event(new \App\Events\OrderPlaced($item->order));
+                // Ganti menjadi ini:
+                event(new \App\Events\OrderUpdated($item->order->table_session_id));
             } catch (\Exception $e) {
             }
         }
@@ -63,6 +67,7 @@ class Dashboard extends Component
 
         try {
             event(new \App\Events\OrderReadyForPickup($order, $message));
+            event(new \App\Events\OrderUpdated($order->table_session_id));
         } catch (\Exception $e) {
         }
 

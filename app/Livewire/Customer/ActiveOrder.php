@@ -36,17 +36,13 @@ class ActiveOrder extends Component
         $this->table = $this->tableSession->table;
     }
 
-    // =================================================================
-    // KEMBALIKAN FITUR REAL-TIME (AUTO REFRESH)
-    // Dengarkan channel publik dapur. Jika koki memencet tombol, otomatis render ulang!
-    // =================================================================
-    #[On('echo:kitchen-channel,.order.placed')]
+    #[On('echo:customer-table-{tableSession.id},.order.placed')]
+    #[On('echo:customer-table-{tableSession.id},.order.updated')]
     public function refreshOrderStatus()
     {
-        // Biarkan kosong. Pemanggilan fungsi ini oleh WebSocket sudah cukup
-        // untuk memaksa Livewire memuat ulang fungsi render() di bawah.
+        // Biarkan kosong. Livewire otomatis memuat ulang fungsi render()
+        // sehingga status Dimasak/Selesai akan langsung berubah di layar pelanggan!
     }
-
     public function render()
     {
         $orders = Order::with(['items.product', 'items.customer', 'items.selectedAddons'])
