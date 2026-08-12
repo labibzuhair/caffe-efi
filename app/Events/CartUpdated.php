@@ -26,8 +26,8 @@ class CartUpdated implements ShouldBroadcastNow
         ];
     }
 
-    public function broadcastAs(): string
-    {
-        return 'cart.updated';
-    }
+    // public function broadcastAs(): string
+    // {
+    //     return 'cart.updated';
+    // }
 }

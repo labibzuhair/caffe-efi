@@ -46,7 +46,7 @@ class FloatingCart extends Component
     // =================================================================
     // LISTENER WEBSOCKET: Memperbarui keranjang saat teman meja mengubahnya
     // =================================================================
-    #[On('echo:customer-table-{tableSessionId},.cart.updated')]
+    #[On('echo:customer-table-{tableSessionId},CartUpdated')]
     public function refreshCart()
     {
         $this->loadCart();

@@ -28,8 +28,8 @@ class OrderPlaced implements ShouldBroadcastNow
     }
 
     // Nama panggilan event ini di frontend
-    public function broadcastAs(): string
-    {
-        return 'order.placed';
-    }
+    // public function broadcastAs(): string
+    // {
+    //     return 'order.placed';
+    // }
 }

@@ -27,8 +27,8 @@ class OrderUpdated implements ShouldBroadcastNow
         ];
     }
 
-    public function broadcastAs(): string
-    {
-        return 'order.updated';
-    }
+    // public function broadcastAs(): string
+    // {
+    //     return 'order.updated';
+    // }
 }

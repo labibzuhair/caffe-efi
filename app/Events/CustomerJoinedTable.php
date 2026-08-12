@@ -27,8 +27,8 @@ class CustomerJoinedTable implements ShouldBroadcastNow
         ];
     }
 
-    public function broadcastAs(): string
-    {
-        return 'customer.joined';
-    }
+    // public function broadcastAs(): string
+    // {
+    //     return 'customer.joined';
+    // }
 }

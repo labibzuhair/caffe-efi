@@ -86,7 +86,7 @@ class Dashboard extends Component
         }
     }
 
-    #[On('echo:kitchen-channel,.order.placed')]
+    #[On('echo:kitchen-channel,OrderPlaced')]
     public function refreshOrders($payload = null)
     {
         $this->dispatch('play-kitchen-bell');
