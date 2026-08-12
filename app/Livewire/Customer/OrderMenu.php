@@ -51,7 +51,7 @@ class OrderMenu extends Component
         $this->selectedCustomerId = $this->customer->id;
     }
 
-    #[On('echo:customer-table-{tableSession.id},CustomerJoinedTable')]
+    #[On('refreshCustomers')]
     public function loadCustomers()
     {
         $this->activeCustomers = $this->tableSession->customers()->get();

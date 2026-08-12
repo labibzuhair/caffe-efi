@@ -115,10 +115,7 @@
 
                     window.Echo.channel('customer-table-{{ $tableSessionId }}')
                         .listen('.App\\Events\\CallCustomer', (e) => {
-
                             this.startAlert(e.message);
-
-                            // Tembak Web Push Notification jika HP sedang diminimize
                             if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
                                 new Notification('🔔 Pesanan Anda Siap!', {
                                     body: e.message,
@@ -127,6 +124,21 @@
                                     tag: 'caffepos-pickup'
                                 });
                             }
+                        })
+                        // ==========================================
+                        // TAMBAHAN LISTENER BARU KITA DI SINI
+                        // ==========================================
+                        .listen('CartUpdated', (e) => {
+                            Livewire.dispatch('refreshCart');
+                        })
+                        .listen('CustomerJoinedTable', (e) => {
+                            Livewire.dispatch('refreshCustomers');
+                        })
+                        .listen('OrderPlaced', (e) => {
+                            Livewire.dispatch('refreshOrderStatus');
+                        })
+                        .listen('OrderUpdated', (e) => {
+                            Livewire.dispatch('refreshOrderStatus');
                         });
                 }
             },

@@ -249,23 +249,18 @@
     </div>
 
     <script>
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
         document.addEventListener('livewire:initialized', () => {
-            const bellSound = new Audio('{{ asset('audio/kitchen-bell.mp3') }}');
-            Livewire.on('play-kitchen-bell', () => {
-                bellSound.currentTime = 0;
-                bellSound.play().catch(e => console.warn("Autoplay diblokir browser."));
-            });
+            const initEcho = () => {
+                if (window.Echo) {
+                    window.Echo.channel('kitchen-channel')
+                        .listen('OrderPlaced', (e) => {
+                            Livewire.dispatch('refreshOrders'); // Suruh dapur refresh
+                        });
+                } else {
+                    setTimeout(initEcho, 500);
+                }
+            };
+            initEcho();
         });
     </script>
 </div>

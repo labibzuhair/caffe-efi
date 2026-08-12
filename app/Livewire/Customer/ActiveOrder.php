@@ -36,8 +36,7 @@ class ActiveOrder extends Component
         $this->table = $this->tableSession->table;
     }
 
-    #[On('echo:customer-table-{tableSession.id},OrderPlaced')]
-    #[On('echo:customer-table-{tableSession.id},OrderUpdated')]
+    #[On('refreshOrderStatus')]
     public function refreshOrderStatus()
     {
         // Biarkan kosong. Livewire otomatis memuat ulang fungsi render()
